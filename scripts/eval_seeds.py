@@ -50,7 +50,10 @@ def eval_seeds(
             temp_config['sample']['seed'] = sample_seed
             lib.dump_config(temp_config, dir_ / "config.toml")
             if eval_type != 'real' and n_datasets > 1:
-                subprocess.run(['python3.9', f'{pipeline[sampling_method]}', '--config', f'{str(dir_ / "config.toml")}', '--sample'], check=True)
+                try: 
+                    subprocess.run(['python3.9', f'{pipeline[sampling_method]}', '--config', f'{str(dir_ / "config.toml")}', '--sample'], check=True)
+                except subprocess.CalledProcessError as e:
+                    print("Error:", e.stderr)
 
             T_dict = deepcopy(raw_config['eval']['T'])
             for seed in range(n_seeds):

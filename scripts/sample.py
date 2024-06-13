@@ -4,7 +4,7 @@ import zero
 import os
 from tab_ddpm.gaussian_multinomial_diffsuion import GaussianMultinomialDiffusion
 from tab_ddpm.utils import FoundNANsError
-from utils_train import get_model, make_dataset
+from scripts.utils_train import get_model, make_dataset
 from lib import round_columns
 import lib
 
@@ -31,7 +31,7 @@ def sample(
     T_dict = None,
     num_numerical_features = 0,
     disbalance = None,
-    device = torch.device('cuda:1'),
+    device = torch.device('cuda:0'),
     seed = 0,
     change_val = False
 ):
@@ -155,5 +155,5 @@ def sample(
         print("Num shape: ", X_num.shape)
         np.save(os.path.join(parent_dir, 'X_num_train'), X_num)
     if num_numerical_features < X_gen.shape[1]:
-        np.save(os.path.join(parent_dir, 'X_cat_train'), X_cat)
+        np.save(os.path.join(parent_dir, 'X_cat_train.npy'), X_cat.astype(str))
     np.save(os.path.join(parent_dir, 'y_train'), y_gen)
