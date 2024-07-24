@@ -1,8 +1,8 @@
 seed = 1
-parent_dir = "exp/churn2/ddpm_cb_best"
-real_data_path = "data/churn2/"
+parent_dir = "exp/ppum/ddpm_cb_best"
+real_data_path = "data/ppum/"
 model_type = "mlp"
-num_numerical_features = 7
+num_numerical_features = 12
 device = "cuda:0"
 
 [model_params]
@@ -41,8 +41,8 @@ cat_encoding = "__none__"
 y_policy = "default"
 
 [sample]
-num_samples = 2000
-batch_size = 1000
+num_samples = 26000
+batch_size = 10000
 seed = 0
 
 [eval.type]
