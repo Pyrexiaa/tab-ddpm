@@ -1,8 +1,8 @@
 seed = 1
-parent_dir = "exp/churn2/ddpm_cb_best"
-real_data_path = "data/churn2/"
+parent_dir = "exp/ppum/ddpm_cb_best"
+real_data_path = "data/ppum/"
 model_type = "mlp"
-num_numerical_features = 7
+num_numerical_features = 12
 device = "cuda:0"
 
 [model_params]
@@ -47,7 +47,7 @@ seed = 0
 
 [eval.type]
 eval_model = "catboost"
-eval_type = "merged"
+eval_type = "synthetic"
 
 [eval.T]
 seed = 0

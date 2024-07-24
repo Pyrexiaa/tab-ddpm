@@ -2,7 +2,7 @@ import tomli
 import shutil
 import os
 import argparse
-from train import train
+from scripts.train import train
 from sample import sample
 from eval_catboost import train_catboost
 from eval_mlp import train_mlp

@@ -236,10 +236,23 @@ def normalize(
         return {k: normalizer.transform(v) for k, v in X.items()}, normalizer
     return {k: normalizer.transform(v) for k, v in X.items()}
 
-
 def cat_process_nans(X: ArrayDict, policy: Optional[CatNanPolicy]) -> ArrayDict:
     assert X is not None
+    lengths = {
+        'train': len(X['train']),
+        'val': len(X['val']),
+        'test': len(X['test']),
+    }
     nan_masks = {k: v == CAT_MISSING_VALUE for k, v in X.items()}
+    # Check if it contains array
+    for key, value in nan_masks.items():
+        if isinstance(value, np.ndarray):
+            print(f"{key}: Is an array with shape {value.shape}")
+        # Not an array, has to extend it
+        else:
+            for k, v in nan_masks.items():
+                if not isinstance(v, np.ndarray):
+                    nan_masks[k] = np.full((lengths[k],), v, dtype=bool)
     if any(x.any() for x in nan_masks.values()):  # type: ignore[code]
         if policy is None:
             X_new = X
@@ -282,8 +295,12 @@ def cat_encode(
     if encoding != 'counter':
         y_train = None
 
-    # Step 1. Map strings to 0-based ranges
+    for dataset in X:
+        if X[dataset].ndim == 1:
+            X[dataset] = X[dataset].reshape(-1, 1)
 
+    # Step 1. Map strings to 0-based ranges
+    
     if encoding is None:
         unknown_value = np.iinfo('int64').max - 3
         oe = sklearn.preprocessing.OrdinalEncoder(
@@ -293,7 +310,13 @@ def cat_encode(
         ).fit(X['train'])
         encoder = make_pipeline(oe)
         encoder.fit(X['train'])
-        X = {k: encoder.transform(v) for k, v in X.items()}
+        # If only one column and already transformed, then can skip this
+        if X['train'][0].shape == (1,):
+            X['train'] = X['train'].astype(int)
+            X['val'] = X['val'].astype(int)
+            X['test'] = X['test'].astype(int)
+        else:
+            X = {k: encoder.transform(v) for k, v in X.items()}
         max_values = X['train'].max(axis=0)
         for part in X.keys():
             if part == 'train': continue

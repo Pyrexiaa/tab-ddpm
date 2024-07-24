@@ -1,0 +1,12 @@
+{
+    "task_type": "binclass",
+    "name": "ppum",
+    "id": "ppum--default",
+    "train_size": 6194,
+    "val_size": 2070,
+    "test_size": 2006,
+    "n_num_features": 12,
+    "n_cat_features": 1
+}
+
+

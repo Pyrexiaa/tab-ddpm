@@ -47,11 +47,15 @@ def sample(
     )
 
     K = np.array(D.get_category_sizes('train'))
+    print("K 1: ",K)
     if len(K) == 0 or T_dict['cat_encoding'] == 'one-hot':
         K = np.array([0])
+        print("K 2: ",K)
 
     num_numerical_features_ = D.X_num['train'].shape[1] if D.X_num is not None else 0
+    print("Numerical features : ",num_numerical_features_)
     d_in = np.sum(K) + num_numerical_features_
+    print("D INNNN: ",d_in)
     model_params['d_in'] = int(d_in)
     model = get_model(
         model_type,
