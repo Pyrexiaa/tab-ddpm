@@ -4,7 +4,7 @@ import os
 import numpy as np
 import zero
 from tab_ddpm.gaussian_multinomial_diffsuion import GaussianMultinomialDiffusion
-from scripts.utils_train import get_model, make_dataset, update_ema
+from utils_train import get_model, make_dataset, update_ema
 import lib
 import pandas as pd
 

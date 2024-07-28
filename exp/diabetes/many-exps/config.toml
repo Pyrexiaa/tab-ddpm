@@ -1,21 +1,18 @@
-seed = 1
-parent_dir = "exp/churn2/ddpm_cb_best"
-real_data_path = "data/churn2/"
+seed = 0
+parent_dir = "exp/diabetes/many-exps/49"
+real_data_path = "data/diabetes/"
 model_type = "mlp"
-num_numerical_features = 7
+num_numerical_features = 8
 device = "cuda:0"
 
 [model_params]
+d_in = 8
 num_classes = 2
 is_y_cond = true
 
 [model_params.rtdl_params]
 d_layers = [
-    512,
-    1024,
-    1024,
-    1024,
-    1024,
+    256,
     512,
 ]
 dropout = 0.0
@@ -26,8 +23,8 @@ gaussian_loss_type = "mse"
 scheduler = "cosine"
 
 [train.main]
-steps = 30000
-lr = 0.0008057094292475385
+steps = 5000
+lr = 0.0009564379517273934
 weight_decay = 0.0
 batch_size = 4096
 
@@ -41,14 +38,13 @@ cat_encoding = "__none__"
 y_policy = "default"
 
 [sample]
-num_samples = 2000
-batch_size = 1000
-seed = 0
+num_samples = 125
+batch_size = 10000
+seed = 4
 
 [eval.type]
 eval_model = "catboost"
 eval_type = "synthetic"
-disbalance = "fix"
 
 [eval.T]
 seed = 0

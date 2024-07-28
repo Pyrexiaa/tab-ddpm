@@ -2,11 +2,11 @@ import torch
 import numpy as np
 import zero
 import os
-from codes.tabddpm.tab_ddpm.gaussian_multinomial_diffsuion import GaussianMultinomialDiffusion
-from codes.tabddpm.tab_ddpm.utils import FoundNANsError
+from tabddpm.tab_ddpm.gaussian_multinomial_diffsuion import GaussianMultinomialDiffusion
+from tabddpm.tab_ddpm.utils import FoundNANsError
 from .utils_train import get_model, make_dataset
-from codes.tabddpm.lib import round_columns
-import codes.tabddpm.lib as lib
+from tabddpm.lib import round_columns
+import tabddpm.lib as lib
 
 def to_good_ohe(ohe, X):
     indices = np.cumsum([0] + ohe._n_features_outs)
@@ -33,7 +33,8 @@ def sample(
     disbalance = 'fix',
     device = torch.device('cuda:0'),
     seed = 0,
-    change_val = False
+    change_val = False,
+    X_cat = None
 ):
     print("DISBALANCE: ",disbalance)
     zero.improve_reproducibility(seed)
@@ -159,4 +160,6 @@ def sample(
         np.save(os.path.join(parent_dir, 'X_cat_train.npy'), X_cat.astype(str))
     np.save(os.path.join(f'{parent_dir}', 'y_train'), y_gen)
 
+    if X_cat is None:
+        return X_num, y_gen
     return X_num, X_cat, y_gen

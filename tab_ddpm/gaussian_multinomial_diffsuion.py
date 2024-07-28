@@ -357,7 +357,9 @@ class GaussianMultinomialDiffusion(torch.nn.Module):
 
     def q_pred(self, log_x_start, t):
         log_cumprod_alpha_t = extract(self.log_cumprod_alpha, t, log_x_start.shape)
+        print("log cumulative product of alpha: ",log_cumprod_alpha_t)
         log_1_min_cumprod_alpha = extract(self.log_1_min_cumprod_alpha, t, log_x_start.shape)
+        print("log 1 minux cumulative product of alpha: ",log_1_min_cumprod_alpha)
 
         log_probs = log_add_exp(
             log_x_start + log_cumprod_alpha_t,
@@ -462,9 +464,13 @@ class GaussianMultinomialDiffusion(torch.nn.Module):
         full_sample = []
         for i in range(len(self.num_classes)):
             one_class_logits = logits[:, self.slices_for_classes[i]]
+            print("One Class Logits: ",one_class_logits)
             uniform = torch.rand_like(one_class_logits)
             gumbel_noise = -torch.log(-torch.log(uniform + 1e-30) + 1e-30)
+            print("Gumbel Noise: ",gumbel_noise)
             sample = (gumbel_noise + one_class_logits).argmax(dim=1)
+            print("Sample Before Argmax: ", gumbel_noise+one_class_logits)
+            print("Sample After Argmax: ",sample)
             full_sample.append(sample.unsqueeze(1))
         full_sample = torch.cat(full_sample, dim=1)
         log_sample = index_to_log_onehot(full_sample, self.num_classes)
@@ -472,8 +478,10 @@ class GaussianMultinomialDiffusion(torch.nn.Module):
 
     def q_sample(self, log_x_start, t):
         log_EV_qxt_x0 = self.q_pred(log_x_start, t)
+        print("Log Probabilities of Expected Value: ", log_EV_qxt_x0)
 
         log_sample = self.log_sample_categorical(log_EV_qxt_x0)
+        print("Log sample after sampling from gumble softmax: ",log_sample)
 
         return log_sample
 
@@ -602,11 +610,12 @@ class GaussianMultinomialDiffusion(torch.nn.Module):
             noise = torch.randn_like(x_num)
             x_num_t = self.gaussian_q_sample(x_num, t, noise=noise)
         if x_cat.shape[1] > 0:
+            print("X Categorical Value Before Log OneHot: ",x_cat)
             log_x_cat = index_to_log_onehot(x_cat.long(), self.num_classes)
+            print("X Categorical Value After Log OneHot: ",log_x_cat)
             log_x_cat_t = self.q_sample(log_x_start=log_x_cat, t=t)
         
         x_in = torch.cat([x_num_t, log_x_cat_t], dim=1)
-
         model_out = self._denoise_fn(
             x_in,
             t,
